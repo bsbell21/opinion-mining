@@ -25,7 +25,7 @@ def convert(x):
     return ob
 
 if __name__ in '__main__':
-    json_filename = sys[1]
+    json_filename = sys.argv[1]
     csv_filename = '%s.csv' % json_filename[:-5]
     print 'Converting %s to %s' % (json_filename, csv_filename)
     df = pd.DataFrame([convert(line) for line in file(json_filename)])
