@@ -1,6 +1,7 @@
 import nltk
 import re
 from nltk.corpus import stopwords
+import ipdb
 
 class SentenceAspectExtractor():
 
@@ -24,6 +25,7 @@ class SentenceAspectExtractor():
     FORBIDDEN = {'great', 'good', 'time', 'friend', 'way', 'friends'}
 
     def __init__(self):
+        ipdb.set_trace()
         pass
 
     def get_sent_aspects(self, sentence):
@@ -33,6 +35,7 @@ class SentenceAspectExtractor():
 
         Given a sentence, return the aspects
         """
+        ipdb.set_trace()
 
         tagged_sent = sentence.pos_tagged
         tree = SentenceAspectExtractor.CHUNKER.parse(tagged_sent)
