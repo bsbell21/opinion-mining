@@ -4,7 +4,24 @@ from random import randint
 
 if __name__ == '__main__':
 	fname = sys.argv[1]
-	df = pd.read_json(fname)
+
+	# read the entire file into a python array
+	with open(fname, 'rb') as f:
+	    data = f.readlines()
+
+	# remove the trailing "\n" from each line
+	data = map(lambda x: x.rstrip(), data)
+
+	# each element of 'data' is an individual JSON object.
+	# i want to convert it into an *array* of JSON objects
+	# which, in and of itself, is one large JSON object
+	# basically... add square brackets to the beginning
+	# and end, and have all the individual business JSON objects
+	# separated by a comma
+	data_json_str = "[" + ','.join(data) + "]"
+
+	df = pd.read_json(data_json_str)
+	
 	df = df.set_index('review_id')
 	d = df.to_dict()
 	d_new = {'review_id': [], 'sentence': [], 'sentiment': []}
