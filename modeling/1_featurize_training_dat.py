@@ -11,15 +11,21 @@ This file:
 
 import os
 import pandas as pd
+import ipdb 
 
-PATH_TO_SENT = "/Users/jeff/Projects/yelp_opinion_mining/raw_data/Sentiment/" # hand-tagged training data
-PATH_TO_YELP = '/Users/jeff/Projects/yelp_opinion_mining/raw_data/yelp_data/raw/yelp_academic_dataset_review.json' # raw Yelp data
+PATH_TO_DATA = "/var/www/sandbox/ben/opinion-mining/data/"
+PATH_TO_SENT = "/var/www/sandbox/ben/opinion-mining/data/Sentiment/" # hand-tagged training data
+PATH_TO_YELP = '/var/www/sandbox/ben/opinion-mining/data/yelp_data/raw/yelp_academic_dataset_review.json' # raw Yelp data
 
 train_fnames = [fname for fname in os.listdir(PATH_TO_SENT) if fname.startswith("Training")]
+
+'''
+TEMPORARILY REMOVING THIS STEP - STILL IN ORIGINAL
 
 # LOAD THE TRAINING DATA....
 print "Reading in the training data..."
 train_dfs = [pd.read_csv(PATH_TO_SENT+fname) for fname in train_fnames]
+ipdb.set_trace()
 for df in train_dfs:
     df.columns = ['review_id', 'sentence', 'sentiment'] #clean up column names for merging
 
@@ -29,12 +35,15 @@ base_df = train_dfs.pop()
 for remaining_df in train_dfs:
     base_df = base_df.append(remaining_df, ignore_index=True)
 
+'''
+base_df = pd.read_csv(PATH_TO_SENT + train_fnames[0]) ### MY ADDITION
+
 # fix stray value
 base_df.sentiment[base_df.sentiment=='Neutral'] = 'Negative'
 
 # READ IN THE YELP DATA....
 print "Reading in the Yelp data..."
-processed_df = pd.read_csv('/Users/jeff/Projects/yelp_opinion_mining/raw_data/yelp_data/processed.csv')
+processed_df = pd.read_csv(PATH_TO_DATA + 'yelp_data/processed.csv')
 
 # keep only what's needed
 keeps =['business_id', 'review_id', 'user_id', 'review_stars', 'user_avg_stars']
@@ -45,13 +54,16 @@ print "Merging training and Yelp data frames & importing Sentence (slowish)"
 final_df = base_df.merge(processed_df, how='left', on='review_id')
 
 # drop a few unmatched values
-final_df = final_df[~final_df.business_id.isnull()]
+# ipdb.set_trace()
+# final_df = final_df[~final_df.business_id.isnull()]
+final_df = final_df.dropna(axis = 0, subset = ['sentence', 'business_id']) ## MY ADDITION HOPING IT DOESN"T MESS THINGS UP
+final_df.to_pickle('final_df.pkl') ## REMOVE
 
 # FEATURIZE
 
 ## Import Sentence class from this project
 import sys
-sys.path.append('/Users/jeff/Projects/yelp_opinion_mining')
+sys.path.append("/var/www/sandbox/ben/opinion-mining")
 from classes.sentence import Sentence
 
 print "Featurizing the training data frame (may take a little while)"
@@ -67,6 +79,7 @@ featurized_df['sentiment'] = final_df.sentiment
 featurized_df = featurized_df[~featurized_df.sentiment.isnull()]
 
 print "Done."
+ipdb.set_trace()
 
 # Adjust sentiment labels
 featurized_df.sentiment[featurized_df.sentiment=='Positive'] = 1

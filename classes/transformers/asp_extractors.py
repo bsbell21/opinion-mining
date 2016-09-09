@@ -25,7 +25,6 @@ class SentenceAspectExtractor():
     FORBIDDEN = {'great', 'good', 'time', 'friend', 'way', 'friends'}
 
     def __init__(self):
-        ipdb.set_trace()
         pass
 
     def get_sent_aspects(self, sentence):
@@ -35,7 +34,6 @@ class SentenceAspectExtractor():
 
         Given a sentence, return the aspects
         """
-        ipdb.set_trace()
 
         tagged_sent = sentence.pos_tagged
         tree = SentenceAspectExtractor.CHUNKER.parse(tagged_sent)
@@ -55,9 +53,10 @@ class SentenceAspectExtractor():
         """
         Generator of NP (nounphrase) leaf nodes of a chunk tree.
         """
-
-        for subtree in tree.subtrees(filter=lambda t: t.node=='NP'):
+        for subtree in tree.subtrees(filter=lambda t: t.label()=='NP'):
             yield subtree.leaves()
+        # for subtree in tree.subtrees(filter=lambda t: t.node=='NP'):
+        #     yield subtree.leaves()
 
     def valid_aspect(self, aspect):
         """

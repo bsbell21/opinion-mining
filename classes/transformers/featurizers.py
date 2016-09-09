@@ -1,6 +1,7 @@
 from __future__ import division
 from tokenizers import NegationSuffixAdder
 from collections import OrderedDict
+import ipdb
 
 class BaseFeaturizer(object):
 
@@ -45,7 +46,7 @@ class MetaFeaturizer(BaseFeaturizer):
 
 class SubjFeaturizer(BaseFeaturizer):
 	
-	PATH_TO_LEXICON = '/Users/jeff/Projects/yelp_opinion_mining/raw_data/Lexicons/subjectivity_clues_hltemnlp05/subjclueslen1-HLTEMNLP05.tff'
+	PATH_TO_LEXICON = '/var/www/sandbox/ben/opinion-mining/data/Lexicon/subjectivity_clues_hltemnlp05/subjclueslen1-HLTEMNLP05.tff'
 
 	TAG_MAP = {'NN': 'noun',
 			   'NNS': 'noun',
@@ -89,16 +90,20 @@ class SubjFeaturizer(BaseFeaturizer):
 
 		Parses one line of the subjectivity lexicon
 		"""
+		# ipdb.set_trace()
+		try: 
 		
-		line = raw_line.strip().split(" ")
-		out = dict([o.split("=") for o in line])
+			line = raw_line.strip().split(" ")
+			out = dict([o.split("=") for o in line])
 
-		the_word = out['word1']
-		the_pos = out['pos1']
-		del out['word1']
-		del out['pos1']
+			the_word = out['word1']
+			the_pos = out['pos1']
+			del out['word1']
+			del out['pos1']
 
-		return {(the_word, the_pos):out}
+			return {(the_word, the_pos):out}
+		except:
+			print raw_line
 
 	def featurize(self, sent):
 		"""
@@ -187,7 +192,7 @@ class LiuFeaturizer(BaseFeaturizer):
     Download lexicon at: http://www.cs.uic.edu/~liub/FBS/opinion-lexicon-English.rar
 	"""
 
-	PATH_TO_LEXICONS = '/Users/jeff/Projects/yelp_opinion_mining/raw_data/Lexicons'
+	PATH_TO_LEXICONS = '/var/www/sandbox/ben/opinion-mining/data/Lexicon/'
 	NEG_SUFFIXER = NegationSuffixAdder()
 
 	def __init__(self):

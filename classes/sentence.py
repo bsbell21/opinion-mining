@@ -6,6 +6,7 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from transformers.tokenizers import MyPottsTokenizer
 from transformers.featurizers import MetaFeaturizer, SubjFeaturizer, LiuFeaturizer
 from transformers.asp_extractors import SentenceAspectExtractor
+import ipdb
 
 class Sentence(object):
 	"""
@@ -56,6 +57,8 @@ class Sentence(object):
 
 		Tokenizes a sentence into a list of words. 
 		"""
+		# ipdb.set_trace()
+
 
 		return Sentence.WORD_TOKENIZER.tokenize(raw)
 

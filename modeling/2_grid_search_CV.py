@@ -23,6 +23,7 @@ from sklearn.metrics import classification_report, roc_curve, auc
 import pylab as pl
 import pandas as pd
 import pickle
+import ipdb
 
 def print_grid_search_results(grid_search, name):
 	"""
@@ -52,16 +53,16 @@ def print_classifier_results(y_true, y_pred, y_proba, name):
 	roc_auc = auc(fpr, tpr)
 	print "Area under the ROC curve: %f" % roc_auc
 
-	pl.clf()
-	pl.plot(fpr, tpr, label='ROC curve (area = %0.2f)' % roc_auc)
-	pl.plot([0, 1], [0, 1], 'k--')
-	pl.xlim([0.0, 1.0])
-	pl.ylim([0.0, 1.0])
-	pl.xlabel('False Positive Rate')
-	pl.ylabel('True Positive Rate')
-	pl.title('ROC Curve: ' + name)
-	pl.legend(loc="lower right")
-	pl.savefig("./results/"+name+'.png', format='png')
+	# pl.clf()
+	# pl.plot(fpr, tpr, label='ROC curve (area = %0.2f)' % roc_auc)
+	# pl.plot([0, 1], [0, 1], 'k--')
+	# pl.xlim([0.0, 1.0])
+	# pl.ylim([0.0, 1.0])
+	# pl.xlabel('False Positive Rate')
+	# pl.ylabel('True Positive Rate')
+	# pl.title('ROC Curve: ' + name)
+	# pl.legend(loc="lower right")
+	# pl.savefig("./results/"+name+'.png', format='png')
 
 def run_opinion_grid_search(full_df):
 	"""
@@ -89,7 +90,7 @@ def run_opinion_grid_search(full_df):
 	#  		  {'clf__kernel': ['linear']}]
 
 	grid_search = GridSearchCV(pipeline, params, n_jobs = -1, verbose=.5, scoring='roc_auc')
-
+	ipdb.set_trace()
 	# run the grid search
 	grid_search.fit(X_train, y_train)
 
@@ -125,6 +126,7 @@ def run_senti_grid_search(full_df):
 	params = {'C':[0.01, 0.1, 1.0, 10.0], 'penalty': ['l1', 'l2']}
 	# params = {'C': [1.0]}
 
+
 	grid_search = GridSearchCV(clf, params, n_jobs = -1, verbose=.5, scoring='roc_auc')
 
 	# run the grid search
@@ -147,6 +149,7 @@ if __name__ == "__main__":
 
 	development_df = pd.read_csv("./data/featurized_development.csv") # raw data set
 
+
 	print "Size of complete development set: %d" % len(development_df)
 	print "Target class breakdowns:"
 	print development_df.sentiment.value_counts()
@@ -158,6 +161,8 @@ if __name__ == "__main__":
 	senti_gs, senti_best_est = run_senti_grid_search(development_df)
 
 	### STORE THE FINAL MODELS ####
+
+	ipdb.set_trace()
 
 	pickle.dump(opin_best_est, open("./results/final_models/opin_pred.p", 'wb'))
 	pickle.dump(senti_best_est, open("./results/final_models/senti_pred.p", 'wb'))
