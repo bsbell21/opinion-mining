@@ -1,8 +1,9 @@
 import json
 import time
 import pandas as pd
+import json
 
-from pymongo import MongoClient
+# from pymongo import MongoClient
 from classes.business import Business
 
 def get_reviews_for_business(bus_id, df):
@@ -21,6 +22,9 @@ def read_data():
 	OUTPUT: pandas data frame from file
 	"""
 	return pd.read_csv('./raw_data/yelp_data/processed.csv')
+
+'''
+ORIGINAL MAIN FUNCTION
 
 def main(): 
 
@@ -46,6 +50,44 @@ def main():
 
 		elapsed = time.time() - start
 		print "Time elapsed: %d" % elapsed
+
+'''
+
+def main(): 
+
+	# client = MongoClient()
+	# db = client.yelptest2
+	# summaries_coll = db.summaries	
+
+	list_of_summaries = [] #my addition
+
+	print "Loading data..."
+	df = read_data()
+	bus_ids = df.business_id.unique()[21:] #why this slice? maybe remove
+
+	for bus_id in bus_ids:
+
+		print "Working on biz_id %s" % bus_id
+		start = time.time()
+
+		biz = Business(get_reviews_for_business(bus_id,df))
+		summary = biz.aspect_based_summary()
+		
+		# summaries_coll.insert(summary)
+		list_of_summaries.append(summary)
+
+
+		print "Inserted summary for %s" % biz.business_name
+
+		elapsed = time.time() - start
+		print "Time elapsed: %d" % elapsed
+
+	# my addition below
+
+	json_string = json.dumps(list_of_summaries)
+	with open('summaries_data.txt', 'w') as outfile:
+    	json.dump(json_string, outfile)
+
 
 
 if __name__ == "__main__":
