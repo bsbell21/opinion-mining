@@ -2,6 +2,7 @@ import json
 import time
 import pandas as pd
 import json
+import ipdb
 
 # from pymongo import MongoClient
 from classes.business import Business
@@ -21,7 +22,7 @@ def read_data():
 	INPUT: None
 	OUTPUT: pandas data frame from file
 	"""
-	return pd.read_csv('./raw_data/yelp_data/processed.csv')
+	return pd.read_csv('./data/yelp_data/processed.csv')
 
 '''
 ORIGINAL MAIN FUNCTION
@@ -84,9 +85,14 @@ def main():
 
 	# my addition below
 
+	# ipdb.set_trace()
+
 	json_string = json.dumps(list_of_summaries)
-	with open('summaries_data.txt', 'w') as outfile:
-    	json.dump(json_string, outfile)
+	with open('data/summaries_data.txt', 'w') as outfile:
+		json.dump(json_string, outfile)
+
+	with open('data/summaries_data2.txt', 'w') as outfile:
+		outfile.write(unicode(json.dumps(list_of_summaries, ensure_ascii=False)))
 
 
 

@@ -158,6 +158,7 @@ class Business(object):
 		Gets summary for a *particular* aspect. Summary includes primarily
 		the sorted positive/negative sentences mentioning this apsect.
 		"""
+		'''
 
 		OPIN_THRESH = 0.75
 		HARD_MIN_OPIN_THRESH = 0.6
@@ -170,6 +171,19 @@ class Business(object):
 		SENTI_OVERRIDE_THRESHOLD = .95 
 
 		SENTENCE_LEN_THRESHOLD = 30 # number of words
+		'''
+
+		OPIN_THRESH = 0.0
+		HARD_MIN_OPIN_THRESH = 0.0
+
+		POS_THRESH = 0.0
+		NEG_THRESH = 0.0
+
+		# override the opinion classifier if 
+		# sentiment classifier is REALLY sure. 
+		SENTI_OVERRIDE_THRESHOLD = 0.0
+
+		SENTENCE_LEN_THRESHOLD = 1 # number of words
 
 		pos_sents = []
 		neg_sents = []
@@ -192,11 +206,18 @@ class Business(object):
 			sent_dict['sorter'] = prob_opin*max(prob_pos, prob_neg) #used to order sentences for display
 
 			if prob_opin > OPIN_THRESH or (max(prob_pos, prob_neg) > SENTI_OVERRIDE_THRESHOLD and prob_opin > HARD_MIN_OPIN_THRESH):
-
+				'''
+				TAKING THIS OUT
 				if prob_pos > POS_THRESH:
 					pos_sents.append(sent_dict)
 				elif prob_neg > NEG_THRESH:
 					neg_sents.append(sent_dict)
+				'''
+				if prob_pos > prob_neg:
+					pos_sents.append(sent_dict)
+				else:
+					neg_sents.append(sent_dict)
+
 
 		n_sents = len(pos_sents) + len(neg_sents) if len(pos_sents) + len(neg_sents) > 0 else 1
 

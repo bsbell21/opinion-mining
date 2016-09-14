@@ -41,6 +41,8 @@ class Review(object):
 
 		Convert the raw text of a review to a list of sentence objects. 
 		"""	
+		# review_text = str(review_text.encode('utf8'))
+		review_text = ''.join([i if ord(i) < 128 else '' for i in review_text]) # my addition DEAL WITH THIS LATER TODO
 		return [Sentence(sent, review=self) for sent in  Review.SENT_TOKENIZER.tokenize(review_text)]
 
 	def __iter__(self):
