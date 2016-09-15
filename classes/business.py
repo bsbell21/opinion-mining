@@ -183,7 +183,7 @@ class Business(object):
 		# sentiment classifier is REALLY sure. 
 		SENTI_OVERRIDE_THRESHOLD = 0.0
 
-		SENTENCE_LEN_THRESHOLD = 1 # number of words
+		SENTENCE_LEN_THRESHOLD = 10000 # number of words
 
 		pos_sents = []
 		neg_sents = []

@@ -64,7 +64,7 @@ def main():
 
 	print "Loading data..."
 	df = read_data()
-	bus_ids = df.business_id.unique()[21:] #why this slice? maybe remove
+	bus_ids = df.business_id.unique() #[21:] #why this slice? maybe remove
 
 	for bus_id in bus_ids:
 
@@ -85,7 +85,7 @@ def main():
 
 	# my addition below
 
-	# ipdb.set_trace()
+	ipdb.set_trace()
 
 	json_string = json.dumps(list_of_summaries)
 	with open('data/summaries_data.txt', 'w') as outfile:
