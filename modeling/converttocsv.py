@@ -5,6 +5,9 @@ Requires Pandas (https://pypi.python.org/pypi/pandas)
 
 By Paul Butler, No Rights Reserved
 '''
+'''
+NOT BEING USED
+'''
 
 import json
 import pandas as pd
@@ -28,5 +31,6 @@ if __name__ in '__main__':
     json_filename = sys.argv[1]
     csv_filename = '%s.csv' % json_filename[:-5]
     print 'Converting %s to %s' % (json_filename, csv_filename)
+    
     df = pd.DataFrame([convert(line) for line in file(json_filename)])
     df.to_csv(csv_filename, encoding='utf-8', index=False)

@@ -12,10 +12,13 @@ This file:
 import os
 import pandas as pd
 import ipdb 
+import sys
+sys.path.append("..") # Adds higher directory to python modules path.
+from module_variables import PATH
 
-PATH_TO_DATA = "/var/www/sandbox/ben/opinion-mining/data/"
-PATH_TO_SENT = "/var/www/sandbox/ben/opinion-mining/data/Sentiment/" # hand-tagged training data
-PATH_TO_YELP = '/var/www/sandbox/ben/opinion-mining/data/yelp_data/raw/yelp_academic_dataset_review.json' # raw Yelp data
+PATH_TO_DATA = PATH + "data/"
+PATH_TO_SENT = PATH + "data/Sentiment/" # hand-tagged training data
+# PATH_TO_YELP = '/var/www/sandbox/ben/opinion-mining/data/yelp_data/raw/yelp_academic_dataset_review.json' # raw Yelp data
 
 train_fnames = [fname for fname in os.listdir(PATH_TO_SENT) if fname.startswith("Training")]
 
@@ -42,15 +45,15 @@ base_df = pd.read_csv(PATH_TO_SENT + train_fnames[0]) ### MY ADDITION
 base_df.sentiment[base_df.sentiment=='Neutral'] = 'Negative'
 
 # READ IN THE YELP DATA....
-print "Reading in the Yelp data..."
-processed_df = pd.read_csv(PATH_TO_DATA + 'yelp_data/processed.csv')
+print "Reading in the User Open End data..."
+processed_df = pd.read_csv(PATH_TO_DATA + 'pilotly_data/processed.csv')
 
 # keep only what's needed
 keeps =['business_id', 'review_id', 'user_id', 'review_stars', 'user_avg_stars']
 processed_df = processed_df[keeps]
 
 # Merge the two data frames
-print "Merging training and Yelp data frames & importing Sentence (slowish)"
+print "Merging training and Pilotly data frames & importing Sentence (slowish)"
 final_df = base_df.merge(processed_df, how='left', on='review_id')
 
 # drop a few unmatched values
@@ -62,8 +65,8 @@ final_df.to_pickle('final_df.pkl') ## REMOVE
 # FEATURIZE
 
 ## Import Sentence class from this project
-import sys
-sys.path.append("/var/www/sandbox/ben/opinion-mining")
+# import sys
+# sys.path.append("/var/www/sandbox/ben/opinion-mining")
 from classes.sentence import Sentence
 
 print "Featurizing the training data frame (may take a little while)"
@@ -79,7 +82,7 @@ featurized_df['sentiment'] = final_df.sentiment
 featurized_df = featurized_df[~featurized_df.sentiment.isnull()]
 
 print "Done."
-ipdb.set_trace()
+# ipdb.set_trace()
 
 # Adjust sentiment labels
 featurized_df.sentiment[featurized_df.sentiment=='Positive'] = 1
@@ -101,8 +104,8 @@ df_holdout = featurized_df.ix[rows].copy()
 df_devel = featurized_df.drop(rows).copy()
 
 # Write to disk
-df_holdout.to_csv("./data/featurized_pristine_holdout.csv", index=False)
-df_devel.to_csv("./data/featurized_development.csv", index=False)
+df_holdout.to_csv(PATH + "data/featurized_pristine_holdout.csv", index=False)
+df_devel.to_csv(PATH + "data/featurized_development.csv", index=False)
 
 print "Done."
 

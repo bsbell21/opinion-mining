@@ -49,8 +49,8 @@ class Business(object):
 		self.business_id = str(review_df.business_id.iloc[0]) # string 
 		self.business_name = str(review_df.business_name.iloc[0]) # string
 		self.overall_stars = int(review_df.business_overall_stars.iloc[0]) # int
-		self.categories = review_df.business_categories.iloc[0].split('<CAT>') #list of strings
-		self.ambiance = review_df.business_ambiance.iloc[0].split('<AMB>') #list of strings
+		self.categories = review_df.business_categories.iloc[0].split(',') #list of strings
+		# self.ambiance = review_df.business_ambiance.iloc[0].split('<AMB>') #list of strings
 
 		# Create the list of Reviews for this Business
 		self.reviews = [Review(dict(review_row), business=self) for _,review_row in review_df.iterrows()]
@@ -93,6 +93,13 @@ class Business(object):
 		asp_dict = dict([(aspect, self.aspect_summary(aspect)) for aspect in aspects])			
 
 		asp_dict = self.filter_asp_dict(asp_dict) # final filtering
+
+		#MY ADDITION TO HELP SORT
+
+		for aspect in asp_dict:
+			asp_dict[aspect]['pos'] = sorted(asp_dict[aspect]['pos'], key = lambda x: x['sorter'], reverse = True)
+			asp_dict[aspect]['neg'] = sorted(asp_dict[aspect]['neg'], key = lambda x: x['sorter'], reverse = True)
+
 
 		return {'business_id': self.business_id,
 				'business_name': self.business_name,
@@ -191,19 +198,43 @@ class Business(object):
 		aspect_sents = self.get_sents_by_aspect(aspect)
 
 		for sent in aspect_sents:
-
 			if len(sent.tokenized) > SENTENCE_LEN_THRESHOLD:
 				continue #filter really long sentences
 
+
+			'''
+			MY ADDITIONS BELOW FOR IF WE JUST WANT TO USE STARS
+			'''
+			# prob_opin = 1 # would probably be better to do this with model
+			# try:
+			# 	prob_pos = float(sent.stars)/5.0
+			# 	prob_neg = 1 - prob_pos
+			# except:
+			# 	continue
+
+			'''
+			END ADDITIONS
+			'''
+
+			#ADD BACK IN 
 			prob_opin = Business.OPINION_MODEL.get_opinionated_proba(sent)
 			prob_pos = Business.SENTIMENT_MODEL.get_positive_proba(sent)
 			prob_neg = 1 - prob_pos
+
 
 			sent_dict = sent.encode()
 			sent_dict['prob_opin'] = prob_opin
 			sent_dict['prob_pos'] = prob_pos
 			sent_dict['prob_neg'] = prob_neg
 			sent_dict['sorter'] = prob_opin*max(prob_pos, prob_neg) #used to order sentences for display
+
+			# MY SORTING ADDITIONS BELOW, TRYING TO BRING LONGER SENTENCES TO THE TOP
+			sentence_length = len(sent.raw.split(' '))
+
+			# sent_dict['sorter'] = prob_opin*max(prob_pos, prob_neg)*(1 + (.01*sentence_length)) #used to order sentences for display
+
+			if sentence_length < 6: 
+				sent_dict['sorter'] = 0
 
 			if prob_opin > OPIN_THRESH or (max(prob_pos, prob_neg) > SENTI_OVERRIDE_THRESHOLD and prob_opin > HARD_MIN_OPIN_THRESH):
 				'''
@@ -264,6 +295,10 @@ class Business(object):
 		aspect filtering to, e.g.,  
 		"""
 		# filter aspects that are too close to the restaurant's name?
+		filter_words = ['yes ', 'yes, ', self.business_name, 'error', 'nothing', 'none', 'no ', 'no, ', 'show', 'episode']
+		for word in filter_words:
+			asps = filter(lambda x: word not in x, asps)
+
 		return asps
 
 

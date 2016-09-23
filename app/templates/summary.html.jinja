@@ -46,7 +46,8 @@
 					{% for pos_sent in summary['aspect_summary'][aspect]['pos'] %}
 						{% if loop.index | less_than_ten %}
 							<li>
-								{{ pos_sent['text'] }} - {{ pos_sent['user']}} 
+								<!-- {{ pos_sent['text'] }} - {{ pos_sent['user']}} -->
+								{{ pos_sent['text'] }}
 								<!-- <span class="label label-default"> {{ pos_sent['prob_opin'] | round(2) }} </span> 
 								<span class="label label-success"> {{ pos_sent['prob_pos'] | round(2) }} </span>
  -->							</li>
@@ -58,7 +59,8 @@
 					{% for neg_sent in summary['aspect_summary'][aspect]['neg'] %}
 						{% if loop.index | less_than_ten %}
 						<li>
-							{{ neg_sent['text'] }} - {{ neg_sent['user']}} 
+							<!-- {{ neg_sent['text'] }} - {{ neg_sent['user']}} -->
+							{{ neg_sent['text'] }}
 							<!-- <span class="label label-default"> {{ neg_sent['prob_opin'] | round(2) }} </span>
 							<span class="label label-danger"> {{ neg_sent['prob_neg'] | round(2) }} </span> -->
 						</li>

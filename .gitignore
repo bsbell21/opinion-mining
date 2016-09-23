@@ -55,3 +55,7 @@ deploy
 
 # Mine
 sftp-config.json
+.ipynb_checkpoints/
+Untitled.ipynb
+app/static/img/Pilotly_Logo_Full.png
+modeling/Old_1_featurize_training_dat.py

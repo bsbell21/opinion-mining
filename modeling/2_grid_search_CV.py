@@ -24,6 +24,9 @@ import pylab as pl
 import pandas as pd
 import pickle
 import ipdb
+import sys
+sys.path.append("..") # Adds higher directory to python modules path.
+from module_variables import PATH
 
 def print_grid_search_results(grid_search, name):
 	"""
@@ -81,7 +84,7 @@ def run_opinion_grid_search(full_df):
 	scaler = StandardScaler()
 
 	pipeline = Pipeline([('scaler', StandardScaler()),
-						 	  ('clf', SVC(class_weight='auto', probability=True))
+						 	  ('clf', SVC(class_weight='balanced', probability=True)) #changed from 'auto'
 							])
 
 	params = [{'clf__kernel': ['rbf'], 'clf__gamma': [100, 10, 1, 1e-2, 1e-3, 1e-4],'clf__C': [.01, 1, 10, 100, 1000]},
@@ -90,7 +93,7 @@ def run_opinion_grid_search(full_df):
 	#  		  {'clf__kernel': ['linear']}]
 
 	grid_search = GridSearchCV(pipeline, params, n_jobs = -1, verbose=.5, scoring='roc_auc')
-	ipdb.set_trace()
+	# ipdb.set_trace()
 	# run the grid search
 	grid_search.fit(X_train, y_train)
 
@@ -122,7 +125,7 @@ def run_senti_grid_search(full_df):
 	print "%s model train size: %d" % (name, len(y_train))
 	print "%s model test size: %d" % (name, len(y_test))
 
-	clf = LogisticRegression(class_weight='auto')
+	clf = LogisticRegression(class_weight='balanced') #changed from auto
 	params = {'C':[0.01, 0.1, 1.0, 10.0], 'penalty': ['l1', 'l2']}
 	# params = {'C': [1.0]}
 
@@ -147,7 +150,7 @@ if __name__ == "__main__":
 
 	print "Reading data..."
 
-	development_df = pd.read_csv("./data/featurized_development.csv") # raw data set
+	development_df = pd.read_csv(PATH + "data/featurized_development.csv") # raw data set
 
 
 	print "Size of complete development set: %d" % len(development_df)
@@ -162,10 +165,10 @@ if __name__ == "__main__":
 
 	### STORE THE FINAL MODELS ####
 
-	ipdb.set_trace()
+	# ipdb.set_trace()
 
-	pickle.dump(opin_best_est, open("./results/final_models/opin_pred.p", 'wb'))
-	pickle.dump(senti_best_est, open("./results/final_models/senti_pred.p", 'wb'))
+	pickle.dump(opin_best_est, open(PATH + "modeling/results/final_models/opin_pred.p", 'wb'))
+	pickle.dump(senti_best_est, open(PATH + "modeling/results/final_models/senti_pred.p", 'wb'))
 
 
 

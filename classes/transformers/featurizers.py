@@ -2,6 +2,9 @@ from __future__ import division
 from tokenizers import NegationSuffixAdder
 from collections import OrderedDict
 import ipdb
+import sys
+sys.path.append("../..") # Adds higher directory to python modules path.
+from module_variables import PATH
 
 class BaseFeaturizer(object):
 
@@ -46,7 +49,7 @@ class MetaFeaturizer(BaseFeaturizer):
 
 class SubjFeaturizer(BaseFeaturizer):
 	
-	PATH_TO_LEXICON = '/var/www/sandbox/ben/opinion-mining/data/Lexicon/subjectivity_clues_hltemnlp05/subjclueslen1-HLTEMNLP05.tff'
+	PATH_TO_LEXICON = PATH + 'data/Lexicon/subjectivity_clues_hltemnlp05/subjclueslen1-HLTEMNLP05.tff'
 
 	TAG_MAP = {'NN': 'noun',
 			   'NNS': 'noun',
@@ -192,7 +195,7 @@ class LiuFeaturizer(BaseFeaturizer):
     Download lexicon at: http://www.cs.uic.edu/~liub/FBS/opinion-lexicon-English.rar
 	"""
 
-	PATH_TO_LEXICONS = '/var/www/sandbox/ben/opinion-mining/data/Lexicon/'
+	PATH_TO_LEXICONS = PATH + 'data/Lexicon/'
 	NEG_SUFFIXER = NegationSuffixAdder()
 
 	def __init__(self):
